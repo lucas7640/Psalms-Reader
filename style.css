@@ -1,0 +1,695 @@
+/* ──────────────────────────────────────────────
+   Psalms · Ancient Voices
+   A parchment-style reader for Hebrew & Latin
+   ────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+Hebrew:wght@400;600&display=swap');
+
+/* ── Reset & base ─────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --parchment:   #f5edd6;
+  --parchment-2: #ede0bc;
+  --ink:         #2c1f0f;
+  --ink-light:   #5c4530;
+  --ink-faint:   #9b7d5a;
+  --accent:      #7a3b1e;
+  --accent-2:    #4a6741;
+  --gold:        #c9952a;
+  --gold-light:  #e8c97a;
+  --divider:     #c9b48a;
+  --hebrew-bg:   #f0e8d0;
+  --latin-bg:    #e8edd8;
+  --kjv-bg:      #ede5d2;
+  --esv-bg:      #e5e8d2;
+  --rsv-bg:      #d8e4e8;
+  --shadow:      rgba(44, 31, 15, 0.12);
+  --radius:      8px;
+  --font-serif:  'EB Garamond', Georgia, serif;
+  --font-hebrew: 'Noto Serif Hebrew', 'SBL Hebrew', serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-serif);
+  background: var(--parchment);
+  color: var(--ink);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ── Header ──────────────────────────────────── */
+header {
+  background: var(--accent);
+  color: var(--gold-light);
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: 0 2px 12px var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+header h1 {
+  font-size: 1.6rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+header h1 span {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.header-hebrew {
+  font-family: var(--font-hebrew);
+  font-size: 1.4rem;
+  color: var(--gold-light);
+  opacity: 0.75;
+  direction: rtl;
+}
+
+/* ── Layout ──────────────────────────────────── */
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: calc(100vh - 80px);
+}
+
+/* ── Sidebar ─────────────────────────────────── */
+aside {
+  background: var(--parchment-2);
+  border-right: 1px solid var(--divider);
+  padding: 1.5rem 0;
+  overflow-y: auto;
+  position: sticky;
+  top: 80px;
+  height: calc(100vh - 80px);
+}
+
+.sidebar-title {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding: 0 1.25rem 0.75rem;
+  border-bottom: 1px solid var(--divider);
+  margin-bottom: 0.5rem;
+}
+
+.psalm-list {
+  list-style: none;
+  padding: 0;
+}
+
+.psalm-list li a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 1.25rem;
+  color: var(--ink-light);
+  text-decoration: none;
+  font-size: 0.92rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+.psalm-list li a:hover {
+  background: var(--divider);
+  color: var(--ink);
+}
+
+.psalm-list li a.active {
+  background: var(--accent);
+  color: var(--gold-light);
+  font-weight: 600;
+}
+
+.psalm-list li a .num {
+  display: inline-block;
+  min-width: 2rem;
+  text-align: right;
+  color: var(--ink-faint);
+  font-size: 0.8rem;
+}
+
+.psalm-list li a.active .num {
+  color: var(--gold);
+}
+
+/* ── Main content ────────────────────────────── */
+main {
+  padding: 2rem 2.5rem;
+  max-width: 900px;
+}
+
+/* Psalm heading */
+.psalm-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--divider);
+}
+
+.psalm-header h2 {
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+.psalm-header .psalm-tagline {
+  font-style: italic;
+  color: var(--ink-light);
+  margin-top: 0.25rem;
+  font-size: 1rem;
+}
+
+/* Controls bar */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.toggle-group {
+  display: flex;
+  gap: 0.4rem;
+  background: var(--parchment-2);
+  border: 1px solid var(--divider);
+  border-radius: var(--radius);
+  padding: 0.2rem;
+}
+
+.toggle-btn {
+  padding: 0.35rem 0.85rem;
+  border: none;
+  background: transparent;
+  border-radius: calc(var(--radius) - 2px);
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  color: var(--ink-light);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.toggle-btn.active {
+  background: var(--accent);
+  color: var(--gold-light);
+}
+
+.toggle-btn:hover:not(.active) {
+  background: var(--divider);
+}
+
+.play-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 1rem;
+  background: var(--accent-2);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.play-all-btn:hover { opacity: 0.85; }
+
+/* ── Verse blocks ────────────────────────────── */
+.verse-list { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.verse-block {
+  border: 1px solid var(--divider);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 1px 4px var(--shadow);
+}
+
+.verse-num-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.9rem;
+  background: var(--parchment-2);
+  border-bottom: 1px solid var(--divider);
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.08em;
+}
+
+.verse-num-bar .v-num {
+  font-weight: 600;
+  color: var(--gold);
+  font-size: 0.85rem;
+}
+
+.verse-num-bar .play-verse-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-faint);
+  font-size: 1rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  transition: background 0.12s, color 0.12s;
+}
+
+.verse-num-bar .play-verse-btn:hover {
+  background: var(--divider);
+  color: var(--accent);
+}
+
+/* Language panels */
+.lang-panel {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--divider);
+}
+
+.lang-panel:last-child { border-bottom: none; }
+
+.lang-panel.hebrew-panel { background: var(--hebrew-bg); }
+.lang-panel.latin-panel  { background: var(--latin-bg); }
+.lang-panel.kjv-panel    { background: var(--kjv-bg); }
+.lang-panel.esv-panel    { background: var(--esv-bg); }
+.lang-panel.rsv-panel    { background: var(--rsv-bg); }
+
+.lang-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lang-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.lang-dot.heb { background: #9b4f2a; }
+.lang-dot.lat { background: #4a6741; }
+.lang-dot.kjv { background: #7a6040; }
+.lang-dot.esv { background: #3d6b8a; }
+.lang-dot.rsv { background: #6b4a8a; }
+
+/* Original text line */
+.original-text {
+  font-size: 1.25rem;
+  line-height: 1.9;
+  margin-bottom: 0.5rem;
+}
+
+.hebrew-panel .original-text {
+  font-family: var(--font-hebrew);
+  direction: rtl;
+  font-size: 1.5rem;
+  letter-spacing: 0.02em;
+}
+
+/* Phonetic line */
+.phonetic-line {
+  font-size: 0.88rem;
+  color: var(--ink-light);
+  font-style: italic;
+  letter-spacing: 0.03em;
+  line-height: 1.7;
+}
+
+.phonetic-stress { color: var(--accent); font-weight: 600; font-style: normal; }
+.phonetic-break  { color: var(--ink-faint); margin: 0 0.05em; }
+
+/* Hidden panels */
+.lang-panel.hidden { display: none; }
+
+/* ── Loading & empty states ──────────────────── */
+.loading-msg {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--ink-faint);
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 2rem; height: 2rem;
+  border: 3px solid var(--divider);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Nav arrows ──────────────────────────────── */
+.psalm-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--divider);
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  background: var(--parchment-2);
+  border: 1px solid var(--divider);
+  border-radius: var(--radius);
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  color: var(--ink-light);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-btn:hover {
+  background: var(--accent);
+  color: var(--gold-light);
+  border-color: var(--accent);
+}
+
+.nav-btn:disabled { opacity: 0.4; cursor: default; pointer-events: none; }
+
+/* ── Speaking highlight ──────────────────────── */
+.verse-block.speaking {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px var(--gold-light);
+}
+
+/* ── Responsive ──────────────────────────────── */
+@media (max-width: 780px) {
+  .layout { grid-template-columns: 1fr; }
+  aside {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--divider);
+    max-height: 220px;
+  }
+  .psalm-list { display: flex; flex-wrap: wrap; gap: 0; }
+  .psalm-list li a { padding: 0.35rem 0.7rem; font-size: 0.82rem; }
+  main { padding: 1.5rem 1rem; }
+}
+
+/* ── Scroll-to-top button ────────────────────── */
+#back-top {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 40px; height: 40px;
+  background: var(--accent);
+  color: var(--gold-light);
+  border: none;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: opacity 0.2s;
+  z-index: 200;
+}
+#back-top.visible { display: flex; }
+#back-top:hover { opacity: 0.85; }
+
+/* ══════════════════════════════════════════════
+   PSALM SELECTION OVERLAY
+   ══════════════════════════════════════════════ */
+
+/* ── Trigger button in header ─────────────────── */
+.browse-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(232, 201, 122, 0.35);
+  border-radius: var(--radius);
+  color: var(--gold-light);
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s;
+  white-space: nowrap;
+}
+.browse-btn:hover {
+  background: rgba(255,255,255,0.22);
+  border-color: var(--gold);
+}
+.browse-icon { font-size: 1rem; line-height: 1; }
+
+/* ── Backdrop ─────────────────────────────────── */
+.overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 12, 4, 0.72);
+  backdrop-filter: blur(3px);
+  z-index: 300;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+.overlay-backdrop.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── Panel ────────────────────────────────────── */
+.overlay-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -46%) scale(0.97);
+  width: min(92vw, 820px);
+  max-height: 85vh;
+  background: var(--parchment);
+  border: 2px solid var(--divider);
+  border-radius: 14px;
+  box-shadow:
+    0 24px 60px rgba(20,12,4,0.45),
+    0 0 0 1px rgba(201,149,42,0.18) inset;
+  z-index: 301;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease, transform 0.28s ease;
+  overflow: hidden;
+}
+.overlay-panel.open {
+  opacity: 1;
+  pointer-events: all;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ── Panel header ─────────────────────────────── */
+.overlay-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.4rem 1.6rem 1rem;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+.overlay-title {
+  font-family: var(--font-hebrew);
+  font-size: 1.45rem;
+  color: var(--gold-light);
+  letter-spacing: 0.04em;
+}
+.overlay-subtitle {
+  font-size: 0.78rem;
+  color: var(--gold-light);
+  opacity: 0.65;
+  margin-top: 0.2rem;
+  letter-spacing: 0.08em;
+}
+.overlay-close {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--gold-light);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  margin-left: 1rem;
+}
+.overlay-close:hover { background: rgba(255,255,255,0.25); }
+
+/* ── Scrollable body ──────────────────────────── */
+.overlay-body {
+  overflow-y: auto;
+  padding: 1.4rem 1.6rem 1.8rem;
+  flex: 1;
+}
+.overlay-loading {
+  text-align: center;
+  color: var(--ink-faint);
+  font-style: italic;
+  padding: 2rem;
+}
+
+/* ── Book groupings ───────────────────────────── */
+.psalm-book {
+  margin-bottom: 1.6rem;
+}
+.psalm-book:last-child { margin-bottom: 0; }
+
+.book-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+.book-heading::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--divider);
+}
+.book-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+.book-roman {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+}
+
+/* ── Number grid ──────────────────────────────── */
+.psalm-number-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+  gap: 0.5rem;
+}
+
+/* ── Individual psalm cell ────────────────────── */
+.psalm-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.3rem 0.45rem;
+  border: 1px solid var(--divider);
+  border-radius: 7px;
+  background: var(--parchment-2);
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--ink);
+  transition:
+    background   0.14s,
+    border-color 0.14s,
+    transform    0.12s,
+    box-shadow   0.14s;
+  position: relative;
+  overflow: hidden;
+}
+.psalm-cell::before {
+  /* shimmer on hover */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(201,149,42,0.08), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.14s;
+}
+.psalm-cell:hover {
+  background: #f0e3c0;
+  border-color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(44,31,15,0.14);
+}
+.psalm-cell:hover::before { opacity: 1; }
+
+.psalm-cell.current {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--gold-light);
+  box-shadow: 0 3px 10px rgba(122,59,30,0.35);
+}
+.psalm-cell.current .cell-num  { color: var(--gold); }
+.psalm-cell.current .cell-name { color: var(--gold-light); opacity: 0.75; }
+
+/* Number — large, roman-numeral feel */
+.cell-num {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
+/* Latin incipit — tiny, italic */
+.cell-name {
+  font-size: 0.6rem;
+  font-style: italic;
+  color: var(--ink-faint);
+  text-align: center;
+  line-height: 1.3;
+  margin-top: 0.2rem;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 2px;
+}
+
+/* ── Keyboard hint ────────────────────────────── */
+.overlay-footer {
+  padding: 0.6rem 1.6rem;
+  background: var(--parchment-2);
+  border-top: 1px solid var(--divider);
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+  text-align: center;
+  flex-shrink: 0;
+}
+kbd {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  background: var(--parchment);
+  border: 1px solid var(--divider);
+  border-radius: 3px;
+  font-family: inherit;
+  font-size: 0.7rem;
+}
+
+/* ── Mobile tweaks ────────────────────────────── */
+@media (max-width: 600px) {
+  .overlay-panel { width: 96vw; max-height: 90vh; }
+  .psalm-number-grid { grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); gap: 0.35rem; }
+  .cell-num { font-size: 1rem; }
+  .cell-name { display: none; } /* hide incipits on very small screens */
+  .browse-btn span:last-child { display: none; } /* just show ☰ icon */
+}
