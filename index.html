@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Psalms · Ancient Voices</title>
+  <meta name="description" content="Read and sing the Psalms in Hebrew and Latin with phonetic pronunciation guides — just as they were heard in ancient times." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────────── -->
+<header>
+  <div>
+    <h1>Psalms · <span>Ancient Voices</span></h1>
+    <div style="font-size:0.78rem;color:var(--gold-light);opacity:0.7;margin-top:0.15rem;letter-spacing:0.06em;">
+      Hebrew &bull; Latin &bull; English &bull; with pronunciation
+    </div>
+  </div>
+
+  <button class="browse-btn" id="browse-btn" onclick="openOverlay()" title="Browse all 150 Psalms">
+    <span class="browse-icon">☰</span>
+    <span>All Psalms</span>
+  </button>
+
+  <div class="header-hebrew" title="Tehillim — Praises">תְּהִלִּים</div>
+</header>
+
+<!-- ── Psalm-selection overlay ──────────────────────────────────── -->
+<div class="overlay-backdrop" id="overlay-backdrop" onclick="closeOverlay()"></div>
+
+<div class="overlay-panel" id="overlay-panel" role="dialog" aria-modal="true" aria-label="Select a Psalm">
+
+  <div class="overlay-header">
+    <div>
+      <div class="overlay-title">תְּהִלִּים &nbsp;·&nbsp; Psalms</div>
+      <div class="overlay-subtitle">Select a psalm to read and sing</div>
+    </div>
+    <button class="overlay-close" onclick="closeOverlay()" title="Close">✕</button>
+  </div>
+
+  <div class="overlay-body" id="overlay-body">
+    <!-- Populated by JS once data is loaded -->
+    <div class="overlay-loading">Loading…</div>
+  </div>
+
+  <div class="overlay-footer">
+    Click a number to open that psalm &nbsp;·&nbsp; <kbd>Esc</kbd> to close
+  </div>
+
+</div>
+
+<!-- ── Layout ──────────────────────────────────────────────────────── -->
+<div class="layout">
+
+  <!-- Sidebar: psalm list -->
+  <aside>
+    <div class="sidebar-title">150 Psalms</div>
+    <ul class="psalm-list" id="psalm-list">
+      <!-- Populated by JS -->
+    </ul>
+  </aside>
+
+  <!-- Main content area -->
+  <main>
+
+    <!-- Psalm heading -->
+    <div class="psalm-header" id="psalm-header">
+      <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Controls bar -->
+    <div class="controls">
+
+      <!-- Language visibility toggles -->
+      <div class="toggle-group" title="Show / hide languages">
+        <button id="btn-he"  class="toggle-btn active" onclick="toggleLang('he')">Hebrew</button>
+        <button id="btn-la"  class="toggle-btn active" onclick="toggleLang('la')">Latin</button>
+        <button id="btn-kjv" class="toggle-btn active" onclick="toggleLang('kjv')">KJV</button>
+        <button id="btn-esv" class="toggle-btn active" onclick="toggleLang('esv')">ESV</button>
+        <button id="btn-rsv" class="toggle-btn"        onclick="toggleLang('rsv')">RSV</button>
+      </div>
+
+      <!-- Read-aloud buttons -->
+      <button class="play-all-btn" onclick="speakAllVerses('he')" title="Read entire psalm in Hebrew">
+        ▶ Read Hebrew
+      </button>
+      <button class="play-all-btn" style="background:var(--accent-2)" onclick="speakAllVerses('la')" title="Read entire psalm in Latin">
+        ▶ Read Latin
+      </button>
+      <button class="play-all-btn" style="background:var(--ink-light)" onclick="stopSpeaking()" title="Stop">
+        ■ Stop
+      </button>
+
+    </div>
+
+    <!-- Verse list -->
+    <div class="verse-list" id="verse-list">
+      <div class="loading-msg">
+        <div class="loading-spinner"></div><br>
+        Loading psalm data…
+      </div>
+    </div>
+
+    <!-- Prev / Next navigation -->
+    <div class="psalm-nav">
+      <button id="nav-prev" class="nav-btn" disabled>← Previous</button>
+      <button id="nav-next" class="nav-btn">Next →</button>
+    </div>
+
+  </main>
+</div>
+
+<!-- Scroll-to-top -->
+<button id="back-top" title="Back to top">↑</button>
+
+<!-- ── Scripts ─────────────────────────────────────────────────────── -->
+<script src="js/transliterate.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
